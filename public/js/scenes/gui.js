@@ -67,4 +67,10 @@ class SceneGUI extends Phaser.Scene {
 
         this.text_chat_msgs.text = chat_msgs;
     }
+
+    specialChar(key_code) {
+        if (key_code == 8) {
+            this.text_chat_input.text = this.text_chat_input.text.slice(0, -1);
+        }
+    }
 }

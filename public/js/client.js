@@ -22,4 +22,16 @@ $(() => {
     socket.on('chat_msg', (data) => {
         game.scene.getScene('gui').chatMsg(data);
     });
+
+    $(document).on('keydown', function(e) {        
+        if (e.keyCode === 8) {
+           e.preventDefault();
+
+           if (game.scene.isActive('login')) {
+               game.scene.getScene('login').specialChar(8)
+           } else if (game.scene.isActive('gui')) {
+            game.scene.getScene('gui').specialChar(8)
+        }
+         }
+    });
 });
