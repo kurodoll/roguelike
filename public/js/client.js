@@ -4,16 +4,22 @@ $(() => {
     // ================================================================= Phaser
     const phaser_config = {
         type: Phaser.AUTO,
-        width: '100%',
-        height: '100%',
-        scene: [ SceneLogin, SceneGame ]
+        width: '99vw',
+        height: '99vh',
+        scene: [ SceneLogin, SceneGUI, SceneGame ]
     };
 
     const game = new Phaser.Game(phaser_config);
     game.scene.start('login');
 
-    socket.on('login_success', (data) => {
-        game.scene.switch('login', 'game');
-        game.scene.getScene('game').setUserInfo(data.user_info);
+    socket.on('login_success', (user_info) => {
+        game.scene.switch('login', 'gui');
+        game.scene.start('game')
+
+        game.scene.getScene('gui').setUserInfo(user_info);
+    });
+
+    socket.on('chat_msg', (data) => {
+        game.scene.getScene('gui').chatMsg(data);
     });
 });
