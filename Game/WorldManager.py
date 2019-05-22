@@ -26,6 +26,22 @@ class WorldManager:
         else:
             log('WorldManager', 'Couldn\'t load ' + level_title, 'error')
 
+    def getLevelElement(self, level_title, element):
+        if level_title not in self.levels.keys():
+            self.loadLevel(level_title)
+
+        if level_title in self.levels.keys():
+            level = self.levels[level_title]
+
+            if 'elements' in level.keys():
+                if 'spawn' in level['elements'].keys():
+                    return level['elements']['spawn']
+
+            log('WorldManager', 'No element ' + element + ' in ' + level_title,
+                'error')
+        else:
+            log('WorldManager', 'Couldn\'t load ' + level_title, 'error')
+
     def loadLevel(self, level_title):
         log('WorldManager', 'Loading level ' + level_title)
 

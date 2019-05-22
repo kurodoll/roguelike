@@ -43,4 +43,8 @@ $(() => {
     socket.on('present_level', (level) => {
         game.scene.getScene('game').setLevel(level);
     });
+
+    socket.on('player_info', (player_info) => {
+        game.scene.getScene('game').setPlayerInfo(player_info);
+    });
 });

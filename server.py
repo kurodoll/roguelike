@@ -27,7 +27,9 @@ app = socketio.WSGIApp(sio, static_files={
     '/scenes/game.js':
         {'content_type': tsj, 'filename': 'public/js/scenes/game.js'},
     '/graphics/tile/ground.png':
-        {'content_type': isp, 'filename': 'public/graphics/tile/ground.png'}
+        {'content_type': isp, 'filename': 'public/graphics/tile/ground.png'},
+    '/graphics/sprite/player.png':
+        {'content_type': isp, 'filename': 'public/graphics/sprite/player.png'}
 })
 
 sid_data = {}
@@ -61,6 +63,11 @@ def login(sid, login_info):
     level = game_manager.getLevel(on_level)
 
     sio.emit('present_level', level, room=sid)
+    sio.emit(
+        'player_info',
+        game_manager.getPlayerInfo(login_info['username']),
+        room=sid
+    )
 
 
 @sio.on('chat_msg')
@@ -75,6 +82,23 @@ def chat_msg(sid, msg):
     })
 
 
+@sio.on('action')
+def action(sid, action_details):
+    res = game_manager.playerAction(
+        sid_data[sid]['login_info']['username'],
+        action_details
+    )
+
+    if res == 'send player info':
+        sio.emit(
+            'player_info',
+            game_manager.getPlayerInfo(
+                sid_data[sid]['login_info']['username']
+            ),
+            room=sid
+        )
+
+
 @sio.on('disconnect')
 def disconnect(sid):
     log('server', 'Disconnected: ' + sid)
@@ -83,7 +107,7 @@ def disconnect(sid):
 if __name__ == '__main__':
     port = 3000
 
-    if os.environ['PORT']:
+    if 'PORT' in os.environ.keys():
         port = int(os.environ['PORT'])
 
     eventlet.wsgi.server(eventlet.listen(('', port)), app)
