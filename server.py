@@ -1,10 +1,15 @@
 from colorama import Fore, Style
 from log import log
 
+from Game import Manager
+
 import eventlet
 import socketio
 
+game_manager = Manager.Manager()
+
 tsj = 'text/javascript'
+isp = 'image/png'
 
 sio = socketio.Server()
 app = socketio.WSGIApp(sio, static_files={
@@ -19,7 +24,9 @@ app = socketio.WSGIApp(sio, static_files={
     '/scenes/gui.js':
         {'content_type': tsj, 'filename': 'public/js/scenes/gui.js'},
     '/scenes/game.js':
-        {'content_type': tsj, 'filename': 'public/js/scenes/game.js'}
+        {'content_type': tsj, 'filename': 'public/js/scenes/game.js'},
+    '/graphics/tile/ground.png':
+        {'content_type': isp, 'filename': 'public/graphics/tile/ground.png'}
 })
 
 sid_data = {}
@@ -48,6 +55,11 @@ def login(sid, login_info):
             'username': login_info['username']
         },
         room=sid)
+
+    on_level = game_manager.getPlayerLevel(login_info['username'])
+    level = game_manager.getLevel(on_level)
+
+    sio.emit('present_level', level, room=sid)
 
 
 @sio.on('chat_msg')

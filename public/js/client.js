@@ -1,4 +1,5 @@
 const socket = io.connect();
+let game;
 
 $(() => {
     // ================================================================= Phaser
@@ -6,11 +7,15 @@ $(() => {
         type: Phaser.AUTO,
         width: '99vw',
         height: '99vh',
-        scene: [ SceneLogin, SceneGUI, SceneGame ]
+        scene: [ SceneLogin, SceneGUI, SceneGame ],
+        render: {
+            'pixelArt': true
+        }
     };
 
-    const game = new Phaser.Game(phaser_config);
-    game.scene.start('login');
+    game = new Phaser.Game(phaser_config);
+    game.scene.start('game')
+    game.scene.switch('game', 'login');
 
     socket.on('login_success', (user_info) => {
         game.scene.switch('login', 'gui');
@@ -33,5 +38,9 @@ $(() => {
             game.scene.getScene('gui').specialChar(8)
         }
          }
+    });
+
+    socket.on('present_level', (level) => {
+        game.scene.getScene('game').setLevel(level);
     });
 });
