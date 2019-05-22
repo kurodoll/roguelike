@@ -84,6 +84,6 @@ if __name__ == '__main__':
     port = 3000
 
     if os.environ['PORT']:
-        port = os.environ['PORT']
+        port = int(os.environ['PORT'])
 
     eventlet.wsgi.server(eventlet.listen(('', port)), app)
