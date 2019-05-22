@@ -3,6 +3,7 @@ from log import log
 
 from Game import Manager
 
+import os
 import eventlet
 import socketio
 
@@ -80,4 +81,9 @@ def disconnect(sid):
 
 
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', 3000)), app)
+    port = 3000
+
+    if os.environ['PORT']:
+        port = os.environ['PORT']
+
+    eventlet.wsgi.server(eventlet.listen(('', port)), app)
